@@ -14,7 +14,7 @@ public static class PlayerAnimationData
 
 public class Player : MonoBehaviour
 {
-    public static event Action<int> OnCoinChanged;
+    public event Action<int> CoinCountChanged;
 
     [SerializeField] private float _speed;
     [SerializeField] private float _jumpForce;
@@ -29,10 +29,21 @@ public class Player : MonoBehaviour
     private bool _canHit = true;
     private bool _isGrounded;
 
-    private void Start()
+    private void Awake()
     {
         _rigidbody2D = GetComponent<Rigidbody2D>();
+
+        if(_rigidbody2D == null)
+        {
+            Debug.LogError("Rigidbode2D component not found" + gameObject.name);
+        }
+
         _animator = GetComponent<Animator>();
+
+        if (_animator == null)
+        {
+            Debug.LogError("Animator component not found" + gameObject.name);
+        }
     }
 
     private void Update()
@@ -40,10 +51,10 @@ public class Player : MonoBehaviour
         Move();
         Jump();
         SetupAnimations();
-        CheckingGround();
+        UpdateGroundedStatus();
     }
 
-    private void CheckingGround()
+    private void UpdateGroundedStatus()
     {
         _isGrounded = Physics2D.OverlapCircle(_groundCheck.position, _groundCheckRadius, _groundLayer);
         _animator.SetBool("onGround", _isGrounded);
@@ -83,5 +94,10 @@ public class Player : MonoBehaviour
         _canHit = false;
         yield return new WaitForSeconds(_reloadTime);
         _canHit = true;
+    }
+
+    private void OnCoinCollected(int newCoinCount)
+    {
+        CoinCountChanged?.Invoke(newCoinCount);
     }
 }

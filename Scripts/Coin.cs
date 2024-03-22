@@ -2,26 +2,26 @@ using UnityEngine;
 
 public class Coin : MonoBehaviour
 {
-    private GameObject _coinPrefab;
+    private GameObject _coinGameObject;
     private Animator _animator;
 
-    public bool IsPecked => gameObject.activeSelf == false;
+    public bool IsPicked => _coinGameObject.activeSelf == false;
 
     private void Awake()
     {
-        _coinPrefab = gameObject;
-        _coinPrefab.SetActive(true);
         _animator = GetComponent<Animator>();
+        _coinGameObject = gameObject;
+        _coinGameObject.SetActive(true);
     }
 
     public void Pick()
     {
-        _coinPrefab.SetActive(false);
+        Debug.Log("Монета подобрана");
+        _coinGameObject.SetActive(false);
     }
 
     public void ResetState()
     {
-        _coinPrefab.SetActive(true);
+        _coinGameObject.SetActive(true);
     }
-
 }

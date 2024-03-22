@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CoinSpawner : MonoBehaviour
@@ -7,27 +6,28 @@ public class CoinSpawner : MonoBehaviour
     [SerializeField] private Coin[] _coins;
     [SerializeField] private float _timeToSpawn;
 
-    private Coin[] _pickedCoins;
+    private List<Coin> _pickedCoins = new List<Coin>();
 
     private void Start()
     {
-        StartCoroutine(SpawnRepeating());
+        InvokeRepeating(nameof(Spawn), _timeToSpawn, _timeToSpawn);
     }
 
-    private IEnumerator SpawnRepeating()
+    private void Spawn()
     {
-        var wait = new WaitForSeconds(_timeToSpawn);
+        _pickedCoins.Clear();
 
-        while (true)
+        foreach (var coin in _coins)
         {
-            yield return wait;
+            if (coin.IsPicked)
+            {
+                _pickedCoins.Add(coin);
+            }
+        }
 
-            _pickedCoins = _coins.Where(coin => coin.IsPecked).ToArray();
-
-            if (_pickedCoins.Length == 0)
-                continue;
-
-            Coin coin = _pickedCoins[Random.Range(0, _pickedCoins.Length)];
+        if(_pickedCoins.Count > 0)
+        {
+            Coin coin = _pickedCoins[Random.Range(0, _pickedCoins.Count)];
             coin.ResetState();
         }
     }
