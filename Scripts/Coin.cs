@@ -16,7 +16,6 @@ public class Coin : MonoBehaviour
 
     public void Pick()
     {
-        Debug.Log("Монета подобрана");
         _coinGameObject.SetActive(false);
     }
 
