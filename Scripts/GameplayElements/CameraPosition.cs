@@ -4,7 +4,7 @@ public class CameraPosition : MonoBehaviour
 {
     [SerializeField] private float _speed;
     [SerializeField] private Vector2 _offset;
-    [SerializeField] private Player _player;
+    [SerializeField] private PlayerMover _player;
 
     private Transform _target;
 
