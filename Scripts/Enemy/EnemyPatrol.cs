@@ -3,69 +3,70 @@ using UnityEngine;
 public class EnemyPatrol : MonoBehaviour
 {
     [SerializeField] private Transform[] _movePoints;
-    [SerializeField] private float _speed;
-    [SerializeField] private float _startWaitTime;
+    [SerializeField] private float _speed = 2.5f;
+    [SerializeField] private float _startWaitTime = 3f;
+    [SerializeField] private EnemyDetector _enemyDetector;
 
-    private Transform _chaseTarget;
-    private EnemyAnimaton _animation;
+    private EnemyAnimationController _animation;
+    private ChasePlayer _chasePlayer;
+    private EnemyMover _mover;
     private float _waitTime;
     private int _randomPoint;
 
-    private void Awake()
+    private void Start()
     {
-        _animation = GetComponent<EnemyAnimaton>();
         _randomPoint = Random.Range(0, _movePoints.Length);
+        _waitTime = _startWaitTime;
+        _animation = GetComponent<EnemyAnimationController>();
+        _chasePlayer = GetComponent<ChasePlayer>();
+        _mover = GetComponent<EnemyMover>();
+        MoveAndRotate(_movePoints[_randomPoint]);
+        _animation.Walk(true);
     }
 
     private void Update()
     {
-        PatrolArea();
+        if (_enemyDetector.Player != null)
+        {
+            _chasePlayer.StartChasing(_enemyDetector.Player);
+            _animation.Walk(true);
+            Debug.Log("Игрок обнаружен");
+        }
+        else
+        {
+            _chasePlayer.StopChasing();
+            Patrol();
+            Debug.Log("Игрок не обнаружен");
+        }
     }
 
-    public void PerformPatrol()
+    public void Patrol()
     {
-        PatrolArea();
-    }
-
-    public void PerformMoveAndRotate(Transform target)
-    {
-        _chaseTarget = target;
-        MoveAndRotate(_chaseTarget);
-    }
-
-    private void PatrolArea()
-    {
-        MoveAndRotate(_movePoints[_randomPoint]);
-
         if (Vector2.Distance(transform.position, _movePoints[_randomPoint].position) < 0.2f)
         {
+            _animation.Walk(false);
+
             if (_waitTime <= 0)
             {
-                _randomPoint = Random.Range(0, _movePoints.Length);
+                _randomPoint = (_randomPoint + 1) % _movePoints.Length;
                 _waitTime = _startWaitTime;
+                MoveAndRotate(_movePoints[_randomPoint]);
                 _animation.Walk(true);
             }
             else
             {
                 _waitTime -= Time.deltaTime;
-                _animation.Walk(false);
             }
         }
         else
         {
+            MoveAndRotate(_movePoints[_randomPoint]);
             _animation.Walk(true);
         }
     }
 
     private void MoveAndRotate(Transform target)
     {
-        transform.position = Vector2.MoveTowards(transform.position, target.position, _speed * Time.deltaTime);
-
-        var direction = (target.position - transform.position).normalized;
-
-        if (direction.x > 0)
-            transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
-        else if (direction.x < 0)
-            transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+        _mover.MoveAndRotate(transform, target, _speed);
     }
 }

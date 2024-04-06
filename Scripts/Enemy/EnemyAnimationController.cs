@@ -9,7 +9,7 @@ public static class EnemyAnimationData
     }
 }
 
-public class EnemyAnimaton : MonoBehaviour
+public class EnemyAnimationController : MonoBehaviour
 {
     private Animator _animator;
 
