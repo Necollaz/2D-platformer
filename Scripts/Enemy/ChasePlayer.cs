@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(EnemyMover), typeof(EnemyAnimationController))]
 public class ChasePlayer : MonoBehaviour
 {
     [SerializeField] private float _chaseSpeed;

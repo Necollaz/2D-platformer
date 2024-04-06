@@ -38,11 +38,13 @@ public class PlayerAnimation : MonoBehaviour
     public void UpdateAnimationState()
     {
         bool isGrounded = _checkGround.UpdateGroundedStatus();
+        Debug.Log($"Is Grounded: {isGrounded}, Is Jumping: {_isJumping}");
 
-        if(isGrounded && _isJumping)
+        if (isGrounded && _isJumping)
         {
             _isJumping = false;
             _animator.SetBool(PlayerAnimationData.Params.Jump, false);
+            Debug.Log("Landed!");
         }
     }
 }

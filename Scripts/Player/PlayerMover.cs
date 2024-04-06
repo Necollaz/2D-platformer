@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Rigidbody2D), typeof(CheckGround), typeof(PlayerAnimation))]
 public class PlayerMover : MonoBehaviour
 {
     private const string HorizontalInput = "Horizontal";
@@ -24,6 +24,7 @@ public class PlayerMover : MonoBehaviour
         Move();
         Jump();
         _playerAnimation.UpdateAnimationState();
+        _checkerGround.UpdateGroundedStatus();
     }
 
     private void Move()
@@ -40,6 +41,7 @@ public class PlayerMover : MonoBehaviour
         else
         {
             _playerAnimation.Walk(false);
+            _rigidbody2D.velocity = new Vector2(0, _rigidbody2D.velocity.y);
         }
     }
 
